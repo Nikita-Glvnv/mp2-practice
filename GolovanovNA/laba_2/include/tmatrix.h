@@ -23,6 +23,10 @@ protected:
   size_t sz;
   T* pMem;
 public:
+  size_t size() const noexcept
+  {
+      return sz;
+  }
   TDynamicVector(size_t size = 1) : sz(size)
   {
     if (sz == 0)
@@ -37,75 +41,135 @@ public:
   }
   TDynamicVector(const TDynamicVector& v);
   TDynamicVector(TDynamicVector&& v) noexcept;
-  ~TDynamicVector()
-  {
+  ~TDynamicVector() {
+      delete[]pMem;
   }
-  TDynamicVector& operator=(const TDynamicVector& v)
-  {
-      throw "Method is not implemented";
+  TDynamicVector& operator=(const TDynamicVector& v) {
+      if (this == &v)
+          return *this;
+
+      if (sz != v.sz)
+      {
+          T* newMem = new T[v.sz];
+          delete[] pMem;
+          pMem = newMem;
+          sz = v.sz;
+      }
+
+      for (size_t i = 0; i < sz; i++)
+      {
+          pMem[i] = v.pMem[i];
+      }
+
+      return *this;
   }
   TDynamicVector& operator=(TDynamicVector&& v) noexcept
   {
+      if (this == &v)
+          return *this;
+      sz = v.sz;
+      delete[]pMem;
+      pMem = v.pMem;
+      v.sz = 0;
+      v.pMem = nullptr;
       return *this;
   }
-
-  size_t size() const noexcept { return sz; }
 
   // индексация
   T& operator[](size_t ind)
   {
-      throw "Method is not implemented";
+      return pMem[ind];
   }
   const T& operator[](size_t ind) const
   {
-      throw "Method is not implemented";
+      return pMem[ind];
   }
   // индексация с контролем
   T& at(size_t ind)
   {
-      throw "Method is not implemented";
+      if (ind < 0 && ind > sz) {
+          throw std::invalid_argument("invalid index");
+      }
+      return pMem[ind];
   }
   const T& at(size_t ind) const
   {
-      throw "Method is not implemented";
+      if (ind < 0 && int > sz) {
+          throw std::invalid_argument("invalid index");
+      }
+      return pMem[ind];
   }
 
   // сравнение
   bool operator==(const TDynamicVector& v) const noexcept
   {
-      throw "Method is not implemented";
+      if (sz != v.sz) return false;
+      for (int i = 0; i < sz; i++) {
+          if (pMem[i] != v.pMem[i]) return false;
+      }
+      return true;
   }
   bool operator!=(const TDynamicVector& v) const noexcept
   {
-      throw "Method is not implemented";
+      if (*this == v)return false;
+      return true;
   }
 
   // скалярные операции
   TDynamicVector operator+(T val)
   {
-      throw "Method is not implemented";
+     TDynamicVector<T> v(*this);
+     for (int i = 0; i < v.sz; i++) {
+          v.pMem[i] += val;
+     }
+     return v;
   }
   TDynamicVector operator-(T val)
   {
-      throw "Method is not implemented";
+      TDynamicVector<T> v(*this);
+      for (int i = 0; i < v.sz; i++) {
+          v.pMem[i] -= val;
+      }
+      return v;
   }
   TDynamicVector operator*(T val)
   {
-      throw "Method is not implemented";
+      TDynamicVector<T> v(*this);
+      for (int i = 0; i < v.sz; i++) {
+          v.pMem[i] *= val;
+      }
+      return v;
   }
 
   // векторные операции
   TDynamicVector operator+(const TDynamicVector& v)
   {
-      throw "Method is not implemented";
+      if (sz != v.sz) throw std::invalid_argument("different length vectors in +");
+      TDynamicVector<T> res(sz);
+      for (int i = 0; i < v.sz; i++) {
+          res.pMem[i] = pMem[i] + v.pMem[i];
+      }
+      return res;
   }
   TDynamicVector operator-(const TDynamicVector& v)
   {
-      throw "Method is not implemented";
+      if (sz != v.sz) throw std::invalid_argument("different length vectors in -");
+      TDynamicVector<T> res(sz);
+      for (int i = 0; i < v.sz; i++) {
+          res.pMem[i] = pMem[i] - v.pMem[i];
+      }
+      return res;
   }
   T operator*(const TDynamicVector& v) noexcept(noexcept(T()))
   {
+      if (sz != v.sz) throw invalid_argument("Different vector sizes");
+      T res = T();
+      for (size_t i = 0; i < sz; i++){
+          res += pMem[i] * v.pMem[i];
+      }
+      return res;
   }
+  
 
   friend void swap(TDynamicVector& lhs, TDynamicVector& rhs) noexcept
   {
@@ -144,47 +208,94 @@ public:
   }
 
   using TDynamicVector<TDynamicVector<T>>::operator[];
+  using TDynamicVector<TDynamicVector<T>>::size;
 
   // сравнение
   bool operator==(const TDynamicMatrix& m) const noexcept
   {
-      throw "Method is not implemented";
+      if (sz != m.sz) return false;
+      for (size_t i = 0; i < sz; i++){
+          if (pMem[i] != m.pMem[i])
+              return false;
+      }
+      return true;
   }
 
   // матрично-скалярные операции
   TDynamicMatrix operator*(const T& val)
   {
-      throw "Method is not implemented";
+      TDynamicMatrix res(sz);
+      for (size_t i = 0; i < sz; i++){
+          res.pMem[i] = pMem[i] * val;
+      }
+      return res;
   }
 
   // матрично-векторные операции
   TDynamicVector<T> operator*(const TDynamicVector<T>& v)
   {
-      throw "Method is not implemented";
+      if (sz != v.size()) throw invalid_argument("Different sizes");
+      TDynamicVector<T> res(sz);
+      for (size_t i = 0; i < sz; i++){
+          res[i] = pMem[i] * v;
+      }
+      return res;
   }
 
   // матрично-матричные операции
   TDynamicMatrix operator+(const TDynamicMatrix& m)
   {
-      throw "Method is not implemented";
+      if (sz != m.sz) throw std::invalid_argument("different length matrix in m+m");
+      TDynamicMatrix ans(sz);
+          for (size_t i = 0; i < sz; i++) {
+              ans.pMem[i] = pMem[i] + m.pMem[i];
+          }
+      return ans;
   }
   TDynamicMatrix operator-(const TDynamicMatrix& m)
   {
-      throw "Method is not implemented";
+      if (sz != m.sz) throw std::invalid_argument("different length matrix in m-m");
+      TDynamicMatrix ans(sz);
+          for (size_t i = 0; i < sz; i++) {
+              ans.pMem[i] = pMem[i] - m.pMem[i];
+          }
+      return ans;
   }
   TDynamicMatrix operator*(const TDynamicMatrix& m)
   {
-      throw "Method is not implemented";
+      if (sz != m.sz) throw std::invalid_argument("different length matrix in m*m");
+      TDynamicMatrix ans(sz);
+      for (int i = 0; i < sz; i++) {
+          for (int j = 0; j < sz; j++) {
+              for (int k = 0; k < sz; k++) {
+                  ans.pMem[i][j] += pMem[i][k] * m.pMem[k][j];
+              }
+          }
+      }
+      return ans;
   }
 
   // ввод/вывод
   friend istream& operator>>(istream& istr, TDynamicMatrix& v)
   {
-      throw "Method is not implemented";
+      for (int i = 0; i < v.sz; i++) {
+          for (int j = 0; j < v.sz; j++) {
+              istr >> v.pMem[i][j];
+          }
+      }
+      return istr;
   }
   friend ostream& operator<<(ostream& ostr, const TDynamicMatrix& v)
   {
-      throw "Method is not implemented";
+      ostr << "[ ";
+      for (int i = 0; i < v.sz; i++) {
+          for (int j = 0; j < v.sz; j++) {
+              ostr << v.pMem[i][j] << " ";
+          }
+          ostr << "\n";
+      }
+      ostr << " ]";
+      return ostr;
   }
 };
 
