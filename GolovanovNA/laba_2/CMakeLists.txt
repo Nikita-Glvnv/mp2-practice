@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.7)
 
 set(PROJECT_NAME tmatrix)
-project(${PROJECT_NAME})
+project(${PROJECT_NAME} LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Configs" FORCE)
 if(NOT CMAKE_BUILD_TYPE)
@@ -23,6 +26,7 @@ include_directories("${MP2_INCLUDE}" gtest)
 add_subdirectory(src)
 add_subdirectory(samples)
 add_subdirectory(gtest)
+enable_testing()
 add_subdirectory(test)
 
 # REPORT

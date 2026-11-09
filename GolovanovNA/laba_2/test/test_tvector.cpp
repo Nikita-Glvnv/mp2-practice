@@ -41,7 +41,7 @@ TEST(TDynamicVector, copied_vector_is_equal_to_source_one)
 
     TDynamicVector<int> v1(v);
 
-    for (int i = 0; i < v.size(); i++)
+    for (std::size_t i = 0; i < v.size(); i++)
     {
         EXPECT_EQ(v[i], v1[i]);
     }
@@ -59,7 +59,7 @@ TEST(TDynamicVector, can_get_size)
 {
     TDynamicVector<int> v(4);
 
-    EXPECT_EQ(4, v.size());
+    EXPECT_EQ(4u, v.size());
 }
 
 TEST(TDynamicVector, throws_when_set_element_with_negative_index)
@@ -108,7 +108,7 @@ TEST(TDynamicVector, assign_operator_change_vector_size)
 
     v1 = v2;
 
-    EXPECT_EQ(5, v1.size());
+    EXPECT_EQ(5u, v1.size());
 }
 
 TEST(TDynamicVector, can_assign_vectors_of_different_size)
@@ -258,3 +258,4 @@ TEST(TDynamicVector, cant_multiply_vectors_with_not_equal_size)
 
     EXPECT_ANY_THROW(v1 * v2);
 }
+

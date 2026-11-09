@@ -52,7 +52,7 @@ TEST(TDynamicMatrix, can_get_size)
 {
     TDynamicMatrix<int> m(4);
 
-    EXPECT_EQ(4, m.size());
+    EXPECT_EQ(4u, m.size());
 }
 
 TEST(TDynamicMatrix, can_set_and_get_element)
@@ -112,7 +112,7 @@ TEST(TDynamicMatrix, assign_operator_change_matrix_size)
 
     m1 = m2;
 
-    EXPECT_EQ(3, m1.size());
+    EXPECT_EQ(3u, m1.size());
 }
 
 TEST(TDynamicMatrix, can_assign_matrices_of_different_size)

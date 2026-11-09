@@ -1,4 +1,4 @@
-﻿// ННГУ, ИИТММ, Курс "Алгоритмы и структуры данных"
+// ННГУ, ИИТММ, Курс "Алгоритмы и структуры данных"
 //
 // Copyright (c) Сысоев А.В.
 //
@@ -6,9 +6,12 @@
 
 #include <iostream>
 #include "tmatrix.h"
+
+using std::cout;
+using std::endl;
 //---------------------------------------------------------------------------
 
-void main()
+int main()
 {
   TDynamicMatrix<int> a(5), b(5), c(5);
   int i, j;
@@ -53,5 +56,6 @@ void main()
   cout << "Matrix b = " << endl << b << endl;
   cout << "Matrix c = a * b" << endl << c << endl;
 
+  return 0;
 }
 //---------------------------------------------------------------------------
